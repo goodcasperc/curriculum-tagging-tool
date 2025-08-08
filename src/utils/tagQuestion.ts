@@ -25,8 +25,10 @@ export function calculateSimilarity(text1: string, text2: string): number {
   const words1 = new Set(extractKeywords(text1))
   const words2 = new Set(extractKeywords(text2))
   
-  const intersection = new Set([...words1].filter(word => words2.has(word)))
-  const union = new Set([...words1, ...words2])
+  const words1Array = Array.from(words1)
+  const words2Array = Array.from(words2)
+  const intersection = new Set(words1Array.filter(word => words2.has(word)))
+  const union = new Set([...words1Array, ...words2Array])
   
   return union.size > 0 ? intersection.size / union.size : 0
 }

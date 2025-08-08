@@ -132,8 +132,8 @@ export function parseTextForCurriculum(text: string): {
   ]
   
   conceptPatterns.forEach(pattern => {
-    const matches = text.matchAll(pattern)
-    for (const match of matches) {
+    let match
+    while ((match = pattern.exec(text)) !== null) {
       if (match[1]) {
         concepts.push(match[1].trim())
       }
@@ -141,8 +141,8 @@ export function parseTextForCurriculum(text: string): {
   })
   
   goalPatterns.forEach(pattern => {
-    const matches = text.matchAll(pattern)
-    for (const match of matches) {
+    let match
+    while ((match = pattern.exec(text)) !== null) {
       if (match[1]) {
         learning_goals.push(match[1].trim())
       }

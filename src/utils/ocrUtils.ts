@@ -1,25 +1,16 @@
 // OCR utilities using Tesseract.js for text extraction from images and PDFs
 
-import { createWorker } from 'tesseract.js'
+import { createWorker, PSM, Worker } from 'tesseract.js'
 
 // Initialize OCR worker
-let ocrWorker: Tesseract.Worker | null = null
+let ocrWorker: Worker | null = null
 
-export async function initializeOCR(): Promise<Tesseract.Worker> {
+export async function initializeOCR(): Promise<Worker> {
   if (ocrWorker) {
     return ocrWorker
   }
 
-  ocrWorker = await createWorker({
-    logger: m => {
-      if (m.status === 'recognizing text') {
-        console.log(`OCR Progress: ${Math.round(m.progress * 100)}%`)
-      }
-    }
-  })
-
-  await ocrWorker.loadLanguage('eng')
-  await ocrWorker.initialize('eng')
+  ocrWorker = await createWorker('eng')
   
   return ocrWorker
 }
@@ -37,17 +28,11 @@ export async function extractTextFromImage(
     
     // Configure OCR options
     await worker.setParameters({
-      tessedit_pageseg_mode: Tesseract.PSM.AUTO,
+      tessedit_pageseg_mode: PSM.AUTO,
     })
     
     // Extract text
-    const { data: { text } } = await worker.recognize(imageUrl, {
-      logger: m => {
-        if (m.status === 'recognizing text' && onProgress) {
-          onProgress(m.progress)
-        }
-      }
-    })
+    const { data: { text } } = await worker.recognize(imageUrl)
     
     // Cleanup
     URL.revokeObjectURL(imageUrl)
@@ -74,13 +59,7 @@ export async function extractTextFromPDFImage(
     const worker = await initializeOCR()
     const imageUrl = URL.createObjectURL(file)
     
-    const { data: { text } } = await worker.recognize(imageUrl, {
-      logger: m => {
-        if (m.status === 'recognizing text' && onProgress) {
-          onProgress(m.progress)
-        }
-      }
-    })
+    const { data: { text } } = await worker.recognize(imageUrl)
     
     URL.revokeObjectURL(imageUrl)
     return text.trim()
