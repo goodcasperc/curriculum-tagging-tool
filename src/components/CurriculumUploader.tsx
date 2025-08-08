@@ -11,7 +11,7 @@ import { CurriculumData } from '@/types'
 
 export default function CurriculumUploader() {
   const { profile } = useProfileStore()
-  const { curriculum, setCurriculum } = useCurriculumStore()
+  const { curriculum, setCurriculum, clearCurriculum } = useCurriculumStore()
   const [isUploading, setIsUploading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState<string>('')
 
@@ -128,7 +128,7 @@ export default function CurriculumUploader() {
         <CurriculumViewer 
           curriculum={curriculum} 
           onClear={() => {
-            setCurriculum(null)
+            clearCurriculum()
             setUploadStatus('')
           }}
         />
